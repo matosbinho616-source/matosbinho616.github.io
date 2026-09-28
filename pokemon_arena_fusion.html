@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pokémon Arena</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#070b12;color:#fff}
+button{border:0;cursor:pointer;font:inherit}.app{max-width:1050px;margin:auto;min-height:100vh;padding:18px}
+header{display:flex;justify-content:space-between;align-items:center;padding:12px 4px 20px}
+.logo{font-size:25px;font-weight:1000}.logo span{color:#ffd21c}.back{background:#1a2230;color:#cbd3df;border-radius:12px;padding:10px 14px;font-weight:800}
+.screen{display:none}.screen.active{display:block}.home{text-align:center;padding:55px 10px}
+.home h1{font-size:48px;margin:8px 0}.home p{color:#9ba7b8}.modes{display:grid;grid-template-columns:repeat(2,1fr);gap:18px;max-width:720px;margin:35px auto}
+.mode{background:linear-gradient(145deg,#121a27,#0d121b);border:1px solid #283449;border-radius:24px;padding:28px;text-align:left;transition:.2s}
+.mode:hover{transform:translateY(-3px);border-color:#526783}.mode .icon{font-size:45px}.mode h2{margin:12px 0 6px}.mode p{margin:0 0 20px}
+.primary{width:100%;padding:14px;border-radius:13px;background:#ffd21c;color:#111;font-weight:1000}
+.section{background:#0d131d;border:1px solid #273246;border-radius:22px;padding:20px;margin-bottom:16px}
+.section h2{margin:0 0 5px}.muted{color:#8d99aa;font-size:13px}.gyms{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:18px}
+.gym{padding:18px;border-radius:16px;background:#151e2b;border:2px solid transparent;color:#fff;font-weight:900}
+.gym.selected{border-color:#ffd21c}.red{box-shadow:inset 0 0 0 1px #8d3030}.blue{box-shadow:inset 0 0 0 1px #315a91}.yellow{box-shadow:inset 0 0 0 1px #8b741f}
+.battleTop{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:15px}.badge{padding:8px 11px;border-radius:999px;background:#172131;color:#d8e0ec;font-size:12px;font-weight:900}
+.teams{display:grid;grid-template-columns:1fr 80px 1fr;gap:14px;align-items:center}.team{background:#111925;border:1px solid #273246;border-radius:20px;padding:15px}
+.teamTitle{display:flex;justify-content:space-between;align-items:center;font-weight:1000}.teamColor{font-size:11px;color:#9eabbc}.slots{display:grid;grid-template-columns:repeat(6,1fr);gap:6px;margin-top:12px}
+.slot{background:#182131;border-radius:12px;text-align:center;padding:5px;min-height:78px}.slot img{width:58px;height:58px;object-fit:contain}.slot small{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#c8d0db;font-size:9px}
+.vs{font-weight:1000;text-align:center;color:#ffd21c;font-size:24px}
+.start{margin-top:15px}.arena{margin-top:15px;background:radial-gradient(circle at center,#1b2635,#0c1119 70%);border:1px solid #29364b;border-radius:24px;padding:20px;overflow:hidden}
+.fighters{display:grid;grid-template-columns:1fr 90px 1fr;align-items:center;gap:10px}.fighter{text-align:center}.fighter img{width:190px;height:190px;object-fit:contain;filter:drop-shadow(0 15px 12px #0008)}.fighter h3{margin:0 0 8px}.type{display:inline-block;padding:5px 9px;border-radius:99px;background:#253143;font-size:11px;font-weight:900}.hpbox{margin:12px auto;max-width:270px;background:#080b10;border:1px solid #303c4e;border-radius:999px;padding:3px}.hp{height:13px;border-radius:99px;background:#35c76f;width:100%;transition:.5s}.hpnum{font-size:11px;color:#aeb9c8}.battleLog{margin-top:12px;background:#080d14;border:1px solid #253043;border-radius:15px;padding:15px;min-height:65px;line-height:1.5}.attack{color:#ffd21c;font-weight:1000}.super{color:#7dffb1;font-weight:1000}.result{font-size:25px;font-weight:1000;text-align:center;margin-top:14px}.adv{margin-top:10px;text-align:center;padding:13px;border-radius:14px;background:#171f2b;color:#ffd21c;font-weight:900}.roundBar{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:0 0 14px}.roundDot{padding:7px 10px;border-radius:999px;background:#182131;color:#718095;font-size:11px;font-weight:1000}.roundDot.active{background:#ffd21c;color:#111}.roundDot.done{background:#1d6b45;color:#fff}.nextBox{text-align:center;margin-top:15px}.nextBtn,.trainBtn{padding:13px 20px;border-radius:13px;background:#ffd21c;color:#111;font-weight:1000}.trainBtn{background:#253247;color:#fff}.final{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}.card{background:#131b27;border:1px solid #29364a;border-radius:14px;padding:12px;text-align:center;font-size:12px;color:#b8c2d0}.card b{display:block;color:#fff;margin-bottom:4px}
+.fusionBox{display:grid;grid-template-columns:1fr 100px 1fr;gap:12px;align-items:center}.pick{background:#111925;border:1px solid #29364b;border-radius:20px;padding:15px;text-align:center}.pick img{width:190px;height:190px;object-fit:contain}.pick h3{margin:5px}.plus{font-size:40px;text-align:center;color:#ffd21c;font-weight:1000}.fusionResult{margin-top:18px;background:radial-gradient(circle,#202d3d,#0c1118);border:1px solid #344257;border-radius:22px;padding:20px;text-align:center}.fusionCanvas{width:340px;height:340px;max-width:86vw;background:transparent;image-rendering:auto}.fusionName{font-size:25px;font-weight:1000;margin:8px}.fusionDesc{color:#9faaba;font-size:13px}.randomBtn{margin-top:14px;padding:13px 20px;border-radius:13px;background:#ffd21c;color:#111;font-weight:1000}
+.note{font-size:11px;color:#718095;text-align:center;margin-top:15px}
+@media(max-width:700px){.modes,.gyms{grid-template-columns:1fr}.teams{grid-template-columns:1fr}.vs{display:none}.slots{grid-template-columns:repeat(3,1fr)}.fighters,.fusionBox{grid-template-columns:1fr}.fighter img,.pick img{width:150px;height:150px}.plus{font-size:30px}.final{grid-template-columns:1fr}.home h1{font-size:36px}}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div class="logo">⚡ POKÉMON <span>ARENA</span></div><button class="back" id="back">← Início</button></header>
+
+<section id="home" class="screen active home">
+<div style="font-size:55px">⚔️</div><h1>Pokémon Arena</h1><p>Batalhas aleatórias e fusões Pokémon.</p>
+<div class="modes">
+<div class="mode"><div class="icon">⚔️</div><h2>Battle Arena</h2><p>Escolha seu ginásio. Os 6 Pokémon do seu time e os 6 do rival são sorteados.</p><button class="primary" onclick="openBattle()">ENTRAR NA ARENA</button></div>
+<div class="mode"><div class="icon">🧬</div><h2>PokéFusion</h2><p>Dois Pokémon aleatórios se juntam em uma única fusão visual.</p><button class="primary" onclick="openFusion()">FUNDIR POKÉMON</button></div>
+</div>
+</section>
+
+<section id="battle" class="screen">
+<div class="section"><h2>⚔️ Battle Arena</h2><div class="muted">Você não escolhe Pokémon: os times são sorteados automaticamente.</div>
+<div class="gyms">
+<button class="gym red selected" data-color="Vermelho">🔴 GINÁSIO VERMELHO</button>
+<button class="gym blue" data-color="Azul">🔵 GINÁSIO AZUL</button>
+<button class="gym yellow" data-color="Amarelo">🟡 GINÁSIO AMARELO</button>
+</div>
+<button class="primary start" id="startBattle">🎲 SORTEAR TIMES E LUTAR</button></div>
+<div id="battleArea"></div>
+</section>
+
+<section id="fusion" class="screen">
+<div class="section"><h2>🧬 PokéFusion</h2><div class="muted">Clique para sortear dois Pokémon e criar uma fusão.</div>
+<button class="primary" id="doFusion">✨ FUNDIR DOIS POKÉMON</button></div>
+<div id="fusionArea"></div>
+<div class="note">As imagens Pokémon são carregadas dos sprites públicos do PokéAPI.</div>
+</section>
+</div>
+
+<script>
+const MAX=1025;
+const img=id=>`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/${id}.png`;
+const pixel=id=>`https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-v/black-white/${id}.png`;
+const typeStrong={normal:['rock','steel'],fire:['grass','ice','bug','steel'],water:['fire','ground','rock'],electric:['water','flying'],grass:['water','ground','rock'],ice:['grass','ground','flying','dragon'],fighting:['normal','ice','rock','dark','steel'],poison:['grass','fairy'],ground:['fire','electric','poison','rock','steel'],flying:['grass','fighting','bug'],psychic:['fighting','poison'],bug:['grass','psychic','dark'],rock:['fire','ice','flying','bug'],ghost:['psychic','ghost'],dragon:['dragon'],dark:['psychic','ghost'],steel:['ice','rock','fairy'],fairy:['fighting','dragon','dark']};
+const attackNames={normal:['Investida','Golpe Corporal','Ataque Rápido'],fire:['Brasa','Lança-Chamas','Roda de Fogo'],water:['Jato d’Água','Surf','Hidrobomba'],electric:['Choque do Trovão','Faísca','Raio'],grass:['Folha Navalha','Chicote de Vinha','Raio Solar'],ice:['Raio de Gelo','Nevasca','Sopro de Gelo'],fighting:['Golpe Baixo','Aura Esférica','Soco Dinâmico'],poison:['Bomba de Veneno','Picada Venenosa'],ground:['Terremoto','Cavar','Abalo Sísmico'],flying:['Ataque Asa','Furacão','Pancada de Vento'],psychic:['Psíquico','Confusão','Psycho Corte'],bug:['Picada','X-Scissor','Fúria'],rock:['Deslizamento de Pedras','Arremesso de Pedra','Pedrada'],ghost:['Bola Sombria','Garra Sombria'],dragon:['Garra de Dragão','Pulso do Dragão','Draco Meteor'],dark:['Mordida','Pulso Sombrio','Jogo Sujo'],steel:['Cabeça de Ferro','Garra de Metal','Canhão de Flash'],fairy:['Brilho Mágico','Vento de Fada','Beijo Drenante']};
+const typeNames={fire:'Fogo',water:'Água',grass:'Planta',electric:'Elétrico',ice:'Gelo',fighting:'Lutador',poison:'Veneno',ground:'Terrestre',flying:'Voador',psychic:'Psíquico',bug:'Inseto',rock:'Pedra',ghost:'Fantasma',dragon:'Dragão',dark:'Sombrio',steel:'Aço',fairy:'Fada',normal:'Normal'};
+let current='home',gym='Vermelho',myTeam=[],enemyTeam=[],round=0,myWins=0,enemyWins=0;
+
+const $=id=>document.getElementById(id);
+function show(id){document.querySelectorAll('.screen').forEach(x=>x.classList.remove('active'));$(id).classList.add('active');current=id}
+$('back').onclick=()=>show('home');
+function openBattle(){show('battle')}
+function openFusion(){show('fusion')}
+document.querySelectorAll('.gym').forEach(b=>b.onclick=()=>{document.querySelectorAll('.gym').forEach(x=>x.classList.remove('selected'));b.classList.add('selected');gym=b.dataset.color});
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+function cap(s){return s.charAt(0).toUpperCase()+s.slice(1)}
+function randomIds(n){let a=[];while(a.length<n){let id=1+Math.floor(Math.random()*MAX);if(!a.includes(id))a.push(id)}return a}
+async function getPokemon(id){try{let r=await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`),p=await r.json();return{id:p.id,name:cap(p.name.replaceAll('-',' ')),types:p.types.map(x=>x.type.name)}}catch{return{id,name:'Pokémon #'+id,types:['normal']}}}
+async function makeTeam(){return Promise.all(randomIds(6).map(getPokemon))}
+function slot(p){return `<div class="slot"><img src="${img(p.id)}"><small>${p.name}</small></div>`}
+function typeAdv(att,defs){return defs.some(d=>(typeStrong[att]||[]).includes(d))}
+function typeName(t){return typeNames[t]||t}
+function rivalColor(){return gym==='Vermelho'?'🔵 Azul':gym==='Azul'?'🟡 Amarelo':'🔴 Vermelho'}
+
+async function startBattle(){
+ const area=$('battleArea');
+ area.innerHTML='<div class="section" style="text-align:center">🎲 Sorteando 12 Pokémon...</div>';
+ [myTeam,enemyTeam]=await Promise.all([makeTeam(),makeTeam()]);
+ round=0;myWins=0;enemyWins=0;
+ area.innerHTML=`<div class="teams"><div class="team"><div class="teamTitle"><span>SEU TIME</span><span class="teamColor">🔴 ${gym}</span></div><div class="slots">${myTeam.map(slot).join('')}</div></div><div class="vs">VS</div><div class="team"><div class="teamTitle"><span>RIVAL</span><span class="teamColor">${rivalColor()} Rival</span></div><div class="slots">${enemyTeam.map(slot).join('')}</div></div></div><div id="match"></div>`;
+ await nextRound();
+}
+
+function roundDots(){
+ return `<div class="roundBar">${[0,1,2,3,4,5].map(i=>`<span class="roundDot ${i<round?'done':''} ${i===round?'active':''}">LUTA ${i+1}</span>`).join('')}</div>`;
+}
+async function nextRound(){
+ if(round>=6){finishLeague();return}
+ const a=myTeam[round],b=enemyTeam[round],arena=$('match');
+ arena.innerHTML=roundDots()+`<div class="arena"><div class="fighters">
+ <div class="fighter"><img src="${img(a.id)}"><h3>${a.name}</h3><span class="type">${typeName(a.types[0])}</span><div class="hpbox"><div class="hp" id="hpA"></div></div><div class="hpnum" id="numA">100 / 100 HP</div></div>
+ <div class="vs">VS</div>
+ <div class="fighter"><img src="${img(b.id)}"><h3>${b.name}</h3><span class="type">${typeName(b.types[0])}</span><div class="hpbox"><div class="hp" id="hpB"></div></div><div class="hpnum" id="numB">100 / 100 HP</div></div></div>
+ <div class="battleLog" id="log">🔔 Luta ${round+1}: ${a.name} vs ${b.name}!</div><div class="result" id="result"></div><div class="adv" id="adv"></div><div class="final" id="final"></div><div class="nextBox" id="nextBox"></div></div>`;
+ let ah=100,bh=100,adTotal=0,bdTotal=0,turn=0;
+ const aAdv=typeAdv(a.types[0],b.types),bAdv=typeAdv(b.types[0],a.types);
+ while(ah>0&&bh>0&&turn<10){
+   turn++;
+   let move=(attackNames[a.types[0]]||attackNames.normal)[Math.floor(Math.random()*3)];
+   let dmg=Math.round((10+Math.random()*18)*(aAdv?1.7:1));bh=Math.max(0,bh-dmg);adTotal+=dmg;
+   $('hpB').style.width=bh+'%';$('numB').textContent=`${bh} / 100 HP`;
+   $('log').innerHTML=`⚔️ <b>${a.name}</b> usou <span class="attack">${move}</span> e causou <b>${dmg}</b> de dano! ${aAdv?'<span class="super">SUPER EFETIVO!</span>':''}`;
+   if(bh<=0)break;await sleep(650);
+   move=(attackNames[b.types[0]]||attackNames.normal)[Math.floor(Math.random()*3)];
+   dmg=Math.round((10+Math.random()*18)*(bAdv?1.7:1));ah=Math.max(0,ah-dmg);bdTotal+=dmg;
+   $('hpA').style.width=ah+'%';$('numA').textContent=`${ah} / 100 HP`;
+   $('log').innerHTML=`⚔️ <b>${b.name}</b> usou <span class="attack">${move}</span> e causou <b>${dmg}</b> de dano! ${bAdv?'<span class="super">SUPER EFETIVO!</span>':''}`;
+   await sleep(650);
+ }
+ const playerWon=ah>0;
+ if(playerWon)myWins++;else enemyWins++;
+ $('result').textContent=playerWon?`🏆 ${a.name.toUpperCase()} VENCEU!`:`💥 ${b.name.toUpperCase()} VENCEU!`;
+ $('adv').textContent=aAdv?`⚡ Vantagem de tipo: seu ${typeName(a.types[0])} teve vantagem contra ${typeName(b.types[0])} do rival.`:bAdv?`⚡ Vantagem de tipo: ${typeName(b.types[0])} do rival teve vantagem contra seu ${typeName(a.types[0])}.`:`⚖️ Nenhum dos dois teve vantagem direta de tipo.`;
+ $('final').innerHTML=`<div class="card"><b>${a.name}</b>HP final: ${ah}/100<br>Dano causado: ${adTotal}</div><div class="card"><b>${b.name}</b>HP final: ${bh}/100<br>Dano causado: ${bdTotal}</div>`;
+ round++;
+ if(round<6){
+   $('nextBox').innerHTML=`<button class="nextBtn" id="nextFight">⚔️ LUTAR NOVAMENTE — PRÓXIMO POKÉMON</button><div class="muted" style="margin-top:8px">Placar: você ${myWins} × ${enemyWins} rival</div>`;
+   $('nextFight').onclick=nextRound;
+ }else finishLeague();
+}
+function finishLeague(){
+ const area=$('match');
+ const passed=myWins>enemyWins;
+ area.innerHTML=roundDots()+`<div class="section" style="text-align:center;padding:30px"><div style="font-size:55px">${passed?'👑':'💪'}</div><h2>${passed?'VOCÊ É DA ELITE!':'TREINE MAIS!'}</h2><p class="muted">${passed?`Você venceu ${myWins} das 6 batalhas e superou o rival.`:`Você venceu ${myWins} das 6 batalhas. Continue treinando e volte mais forte.`}</p><div class="final"><div class="card"><b>SEU TIME</b>${myWins} vitórias</div><div class="card"><b>RIVAL</b>${enemyWins} vitórias</div></div><button class="${passed?'nextBtn':'trainBtn'}" style="margin-top:16px" onclick="startBattle()">${passed?'🏆 NOVO DESAFIO':'💪 TREINE E TENTE NOVAMENTE'}</button></div>`;
+}
+
+async function makeFusion(){
+ const area=$('fusionArea');
+ area.innerHTML='<div class="section" style="text-align:center">🧬 Criando uma fusão de verdade...</div>';
+ const [a,b]=await Promise.all(randomIds(2).map(getPokemon));
+ area.innerHTML=`<div class="fusionBox"><div class="pick"><img src="${img(a.id)}"><h3>${a.name}</h3><span class="type">${typeName(a.types[0])}</span></div><div class="plus">＋</div><div class="pick"><img src="${img(b.id)}"><h3>${b.name}</h3><span class="type">${typeName(b.types[0])}</span></div></div><div class="fusionResult"><canvas id="fusionCanvas" class="fusionCanvas" width="600" height="600"></canvas><div class="fusionName">${cap(a.name.slice(0,Math.ceil(a.name.length/2)))}${b.name.slice(Math.floor(b.name.length/2))}</div><div class="fusionDesc">Corpo de <b>${a.name}</b> + partes de <b>${b.name}</b>, misturados no mesmo Pokémon.</div><button class="randomBtn" onclick="makeFusion()">🔄 OUTRA FUSÃO</button></div>`;
+ // Composite real: A is the body/base, B contributes a cropped head/upper-body and lower feature.
+ const c=$('fusionCanvas'),ctx=c.getContext('2d'),A=new Image(),B=new Image();A.crossOrigin='anonymous';B.crossOrigin='anonymous';
+ let loaded=0;const ready=()=>{if(++loaded<2)return;
+   ctx.clearRect(0,0,600,600);
+   // Base Pokémon.
+   ctx.drawImage(A,45,45,510,510);
+   // B head/upper features clipped into the top-center, so it becomes one creature.
+   ctx.save();ctx.beginPath();ctx.ellipse(300,205,145,120,0,0,Math.PI*2);ctx.clip();ctx.globalAlpha=.98;ctx.drawImage(B,105,-5,390,390);ctx.restore();
+   // B central body feature blended into A's torso.
+   ctx.save();ctx.beginPath();ctx.ellipse(300,380,105,125,0,0,Math.PI*2);ctx.clip();ctx.globalAlpha=.9;ctx.drawImage(B,175,210,250,250);ctx.restore();
+   // soft seam.
+   const g=ctx.createRadialGradient(300,300,20,300,300,220);g.addColorStop(0,'rgba(255,255,255,.08)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.fillRect(0,0,600,600);
+ };A.onload=ready;B.onload=ready;A.src=img(a.id);B.src=img(b.id);
+}
+$('startBattle').onclick=startBattle;
+$('doFusion').onclick=makeFusion;
+</script>
+</body>
+</html>
